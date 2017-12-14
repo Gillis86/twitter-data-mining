@@ -6,8 +6,8 @@ import threading
 
 
 if __name__=='__main__':
-    usersIDS = {'User1':0000001,'User2':00000002,
-                'User3':000003,'User4':0000004}
+    usersIDS = {'UserName1':1234,'UserName2':1234,
+                'UserName3':1234,'UserName4':'userName4'}
     threads = {}
     excel_writer = pd.ExcelWriter("Y-C Influencer Report.xlsx", engine='openpyxl')
     
