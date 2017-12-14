@@ -17,33 +17,33 @@ class Twitter_User():
         self.data = None
         self.like_average = None
         self.rt_average = None
+        try:
+            self._user = api.get_user(self.id)
+            self.name = self._user._json['name']
+            self.screen_name = self._user._json['screen_name']
+            self.location = self._user._json['location']
+            self.description = self._user._json['description']
+            self._url = self._user._json['url']
+            self.followers = self._user._json['followers_count']
+        except tweepy.TweepError as e:
+            print(e.response.text)
+            return
+        except tweepy.RateLimitError:
+            rate = api.rate_limit_status()
+            print(rate)
+            return 
 
     def get_tweets(self): #store last n tweets in a dataframe
         simple_list = []
-        try:
-            for status in tweepy.Cursor(api.user_timeline, id=self.id).items(self.count):
-                array = [status._json["text"].strip(), status._json["favorite_count"],
-                         status._json["created_at"], status._json["retweet_count"],
-                         [h["text"] for h in status._json["entities"]["hashtags"]],status._json["lang"]]
-                simple_list.append(array)
-            self.data = pd.DataFrame(simple_list, columns=["Text", "Like", "Created at", "Retweet", "Hashtags","Lang"])
-            self.data = self.data[~self.data["Text"].str.startswith('RT')]
-            return self.data
-        except tweepy.TweepError:
-            return tweepy.TweepError.message[0]['code']
-        except tweepy.RateLimitError:
-            rate = api.rate_limit_status()
-            return rate
+        for status in tweepy.Cursor(api.user_timeline, id=self.id).items(self.count):
+            array = [status._json["text"].strip(), status._json["favorite_count"],
+                    status._json["created_at"], status._json["retweet_count"],
+                    [h["text"] for h in status._json["entities"]["hashtags"]],status._json["lang"]]
+            simple_list.append(array)
+        self.data = pd.DataFrame(simple_list, columns=["Text", "Like", "Created at", "Retweet", "Hashtags","Lang"])
+        self.data = self.data[~self.data["Text"].str.startswith('RT')]
+        return self.data
 
-    def __repr__(self): #give a repr of the user
-        user = api.get_user(self.id)
-        return "User name: {0}\n" \
-               "User screen name: {1}\n" \
-               "Location: {2}\n" \
-               "User description: {3}\n"\
-                "Url: {4}\n" \
-               "Followers {5}".format(user._json['name'],user._json['screen_name'],user._json['location'],
-                                      user._json['description'],user._json['url'],user._json['followers_count'])
 
     def most_liked_rt(self): #return a df of tweets where the number of like and rt is greater than respective averages
         self.like_average = self.data["Like"].mean()
