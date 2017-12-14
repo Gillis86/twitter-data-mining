@@ -18,12 +18,12 @@ class Twitter_User():
         self.like_average = None
         self.rt_average = None
         try:
-            self._user = api.get_user(self.id)
+            self.user = api.get_user(self.id)
             self.name = self._user._json['name']
             self.screen_name = self._user._json['screen_name']
             self.location = self._user._json['location']
             self.description = self._user._json['description']
-            self._url = self._user._json['url']
+            self.url = self._user._json['url']
             self.followers = self._user._json['followers_count']
         except tweepy.TweepError as e:
             print(e.response.text)
