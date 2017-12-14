@@ -9,7 +9,7 @@ if __name__=='__main__':
     usersIDS = {'UserName1':1234,'UserName2':1234,
                 'UserName3':1234,'UserName4':1234}
     threads = {}
-    excel_writer = pd.ExcelWriter("Y-C Influencer Report.xlsx", engine='openpyxl')
+    excel_writer = pd.ExcelWriter("Twitter User's Report.xlsx", engine='openpyxl')
     
     def get_data(user_id): #get best last tweets and store them in a excel file
         user = Twitter_User.Twitter_User(user_id,2000)
